@@ -1,3 +1,20 @@
 body {
   background-color: #eee;
 }
+
+table td {
+  background-color: rgb(226, 250, 199);
+  padding: 8px;
+  border: 1px solid black;
+  max-width: 200px;
+  word-wrap: break-word
+}
+
+table th {
+  background-color: rgb(157, 230, 90);
+  color: white;
+  padding: 8px;
+  border: 1px solid black;
+  font-weight: bold;
+}
+
