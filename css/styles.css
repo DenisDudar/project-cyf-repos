@@ -4,16 +4,16 @@ body {
 
 table td {
   background-color: rgb(226, 250, 199);
-  padding: 8px;
+  padding: 1em;
   border: 1px solid black;
-  max-width: 200px;
+  max-width: 10em;
   word-wrap: break-word
 }
 
 table th {
   background-color: rgb(157, 230, 90);
   color: white;
-  padding: 8px;
+  padding: 1em;
   border: 1px solid black;
   font-weight: bold;
 }
@@ -24,12 +24,3 @@ table th {
   align-items: center;
 }
 
-#root #container {
-  padding: 20px;
-}
-
-#container select{
-  width: 200px;
-  padding: 5px;
-  border-radius: 5px;
-}
