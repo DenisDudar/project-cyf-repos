@@ -30,7 +30,6 @@ function createTable(arr) {
     let linkCell = document.createElement("td");
     let link = document.createElement("a");
     link.innerText = arr[i].html_url;
-    link.target = "_blank";
     linkCell.appendChild(link);
     tr.appendChild(linkCell);
 
