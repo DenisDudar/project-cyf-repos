@@ -18,3 +18,18 @@ table th {
   font-weight: bold;
 }
 
+#root {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+
+#root #container {
+  padding: 20px;
+}
+
+#container select{
+  width: 200px;
+  padding: 5px;
+  border-radius: 5px;
+}
