@@ -6,20 +6,8 @@ export default function buildPage() {
   const table = createTable(tableData);
   root.appendChild(table);
 
-  //Creating input field with button
-  const input = document.createElement("input");
-  input.setAttribute("placeholder", "Search...");
+  const input = createSearchBar();
   root.appendChild(input);
-  const button = document.createElement("button");
-  button.textContent = "Search";
-  root.appendChild(button);
-
-  button.addEventListener("click", function () {
-    const searchTerm = input.value.trim().toLowerCase();
-    const filteredData = search(searchTerm, repos);
-    updateTable(filteredData);
-  });
-
   input.addEventListener("keydown", function (event) {
     if (event.code === "Enter"){
       const searchTerm = event.target.value.trim().toLowerCase();
@@ -28,26 +16,23 @@ export default function buildPage() {
     }
   });
 
-  // Creating sorting dropdown
-  let sortDropdown = document.createElement("select");
+  const button = createSearchButton();
+  root.appendChild(button);
+  button.addEventListener("click", function () {
+    const searchTerm = input.value.trim().toLowerCase();
+    const filteredData = search(searchTerm, repos);
+    updateTable(filteredData);
+  });
+
+  const sortDropdown = createSortDropdown();
   root.appendChild(sortDropdown);
-  let sortName = document.createElement("option");
-  sortName.value = "name";
-  sortName.textContent = "sort by: name";
-  sortName.selected = "selected";
-  sortDropdown.appendChild(sortName);
-
-  let sortUpdate = document.createElement("option");
-  sortUpdate.value = "update";
-  sortUpdate.textContent = "sort by: updated date";
-  sortDropdown.appendChild(sortUpdate);
-
   sortDropdown.addEventListener("change", function (event) {
     const selectedOption = event.target.value;
     const sortedData = sort(selectedOption);
     updateTable(sortedData);
   });
 }
+
 
 function createTable(arr) {
   let table = document.createElement("table");
@@ -85,6 +70,40 @@ function createTable(arr) {
   return table;
 }
 
+function createSearchBar () {
+  const input = document.createElement("input");
+  input.setAttribute("placeholder", "Search...");
+  return input
+}
+
+function createSearchButton () {
+  const button = document.createElement("button");
+  button.textContent = "Search";
+  return button;
+}
+
+function createSortDropdown () {
+  const sortDropdown = document.createElement("select");
+  const emptyOption = document.createElement("option");
+  emptyOption.value = "empty";
+  emptyOption.textContent = "sort by:";
+  emptyOption.selected = "selected";
+  emptyOption.disabled = true;
+  sortDropdown.appendChild(emptyOption);
+
+  const sortName = document.createElement("option");
+  sortName.value = "name";
+  sortName.textContent = "sort by: name";
+  sortDropdown.appendChild(sortName);
+
+  const sortUpdate = document.createElement("option");
+  sortUpdate.value = "update";
+  sortUpdate.textContent = "sort by: updated date";
+  sortDropdown.appendChild(sortUpdate);
+
+  return sortDropdown
+}
+
 function search(searchTerm, arr) {
   const filteredData = arr.filter(item =>
     item.name.toLowerCase().includes(searchTerm) ||
@@ -94,7 +113,6 @@ function search(searchTerm, arr) {
   return filteredData;
 }
 
-//updateTable function should to remove existing table and create new with search parameters
 function updateTable(filteredData) {
   const existingTable = root.querySelector("table");
   if (existingTable) {
