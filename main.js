@@ -2,17 +2,17 @@ import repos from "/data/repos.js";
 
 export default function buildPage() {
   const root = document.querySelector("div#root");
+  let tableData = repos.slice(); 
+  const table = createTable(tableData);
+  root.appendChild(table);
 
+  //Creating input field with button
   const input = document.createElement("input");
   input.setAttribute("placeholder", "Search...");
   root.appendChild(input);
   const button = document.createElement("button");
   button.textContent = "Search";
   root.appendChild(button);
-
-  let tableData = repos.slice(); 
-  const table = createTable(tableData);
-  root.appendChild(table);
 
   button.addEventListener("click", function () {
     const searchTerm = input.value.trim().toLowerCase();
@@ -26,6 +26,26 @@ export default function buildPage() {
       const filteredData = search(searchTerm, repos);
       updateTable(filteredData);
     }
+  });
+
+  // Creating sorting dropdown
+  let sortDropdown = document.createElement("select");
+  root.appendChild(sortDropdown);
+  let sortName = document.createElement("option");
+  sortName.value = "name";
+  sortName.textContent = "sort by: name";
+  sortName.selected = "selected";
+  sortDropdown.appendChild(sortName);
+
+  let sortUpdate = document.createElement("option");
+  sortUpdate.value = "update";
+  sortUpdate.textContent = "sort by: updated date";
+  sortDropdown.appendChild(sortUpdate);
+
+  sortDropdown.addEventListener("change", function (event) {
+    const selectedOption = event.target.value;
+    const sortedData = sort(selectedOption);
+    updateTable(sortedData);
   });
 }
 
@@ -86,7 +106,15 @@ function updateTable(filteredData) {
 }
 
 function sort(event) {
+  let sortedData = repos.slice();
 
+  if (event === "name") {
+    sortedData.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (event === "update") {
+    sortedData.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  }
+
+  return sortedData;
 }
 
 function setPagination() {
