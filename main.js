@@ -1,36 +1,22 @@
 import repos from "/data/repos.js";
 
+const options = {
+  filterBy: null,
+  sortBy: null,
+  buttonValue: null
+};
+
 export default function buildPage() {
   const root = document.querySelector("div#root");
-  let tableData = repos.slice(); 
-  const table = createTable(tableData);
+
+  const table = createTable(repos);
   root.appendChild(table);
 
-  const input = createSearchBar();
-  root.appendChild(input);
-  input.addEventListener("keydown", function (event) {
-    if (event.code === "Enter"){
-      const searchTerm = event.target.value.trim().toLowerCase();
-      const filteredData = search(searchTerm, repos);
-      updateTable(filteredData);
-    }
-  });
+  const searchBar = createSearchBar();
+  root.appendChild(searchBar);
 
-  const button = createSearchButton();
-  root.appendChild(button);
-  button.addEventListener("click", function () {
-    const searchTerm = input.value.trim().toLowerCase();
-    const filteredData = search(searchTerm, repos);
-    updateTable(filteredData);
-  });
-
-  const sortDropdown = createSortDropdown();
-  root.appendChild(sortDropdown);
-  sortDropdown.addEventListener("change", function (event) {
-    const selectedOption = event.target.value;
-    const sortedData = sort(selectedOption);
-    updateTable(sortedData);
-  });
+  const sortContainer = createSortContainer();
+  root.appendChild(sortContainer);
 }
 
 
@@ -44,10 +30,14 @@ function createTable(arr) {
     th.innerText = headers[h];
     headerRow.appendChild(th);
   }
+
   table.appendChild(headerRow);
   
+  // TODO:
+  // replace for loop with map.
   for (let i = 0; i < arr.length; i++) {
     let tr = document.createElement("tr");
+    
     let nameCell = document.createElement("td");
     nameCell.innerText = arr[i].name;
     tr.appendChild(nameCell);
@@ -59,6 +49,7 @@ function createTable(arr) {
     let linkCell = document.createElement("td");
     let link = document.createElement("a");
     link.innerText = arr[i].html_url;
+    link.href = arr[i].html_url;
     linkCell.appendChild(link);
     tr.appendChild(linkCell);
 
@@ -71,19 +62,38 @@ function createTable(arr) {
 }
 
 function createSearchBar () {
+  const searchBarContainer = document.createElement("div");
+  searchBarContainer.className = "search-bar";
+
   const input = document.createElement("input");
-  input.setAttribute("placeholder", "Search...");
-  return input
-}
-
-function createSearchButton () {
   const button = document.createElement("button");
+
   button.textContent = "Search";
-  return button;
+  input.setAttribute("placeholder", "Search...");
+  
+  searchBarContainer.appendChild(input);
+  searchBarContainer.appendChild(button);
+
+  input.addEventListener("keydown", (event) => {
+    if (event.code === "Enter") {
+      let searchTerm = event.target.value.trim().toLowerCase();
+      search(searchTerm);
+    }
+  });
+
+  button.addEventListener("click", () => {
+    let searchTerm = input.value.trim().toLowerCase();
+    search(searchTerm);
+  });
+
+  return searchBarContainer
 }
 
-function createSortDropdown () {
+function createSortContainer () {
+  const sortContainer = document.createElement("div");
+  sortContainer.className = "sort-container";
   const sortDropdown = document.createElement("select");
+
   const emptyOption = document.createElement("option");
   emptyOption.value = "empty";
   emptyOption.textContent = "sort by:";
@@ -101,38 +111,76 @@ function createSortDropdown () {
   sortUpdate.textContent = "sort by: updated date";
   sortDropdown.appendChild(sortUpdate);
 
-  return sortDropdown
+  const sortButton = document.createElement("button");
+  sortButton.textContent = "ASC";
+  options.buttonValue = sortButton.textContent;
+  sortContainer.appendChild(sortDropdown);
+  sortContainer.appendChild(sortButton);
+
+  sortDropdown.addEventListener("change", sort);
+  sortButton.addEventListener("click", function () {
+    if (sortButton.textContent === "ASC") {
+      sortButton.textContent = "DESC";
+      options.buttonValue = sortButton.textContent;
+      sort(options.sortBy);
+    } else {
+      sortButton.textContent = "ASC";
+      options.buttonValue = sortButton.textContent;
+      sort(options.sortBy);
+    }
+  });
+
+  return sortContainer;
 }
 
-function search(searchTerm, arr) {
-  const filteredData = arr.filter(item =>
-    item.name.toLowerCase().includes(searchTerm) ||
-    (item.description && item.description.toLowerCase().includes(searchTerm))
-  );
+function search(searchTerm) {
+  const filteredData = repos.filter(item =>
+    item.name.toLowerCase().includes(searchTerm) || (
+      item.description && item.description.toLowerCase().includes(searchTerm)
+    ));
+  options.filterBy = searchTerm;
 
-  return filteredData;
-}
-
-function updateTable(filteredData) {
-  const existingTable = root.querySelector("table");
-  if (existingTable) {
-    root.removeChild(existingTable); 
-  }
+  // TODO: 
+  // sheck if you need to sort your filtered data
+  // if yes, then sort fileteredData.
   
-  const updatedTable = createTable(filteredData);
-  root.appendChild(updatedTable);
+  const newTable = createTable(filteredData);
+  newTable.className = "new-table";
+  const root = document.querySelector("div#root");
+  const oldTable = root.querySelector("table");
+  root.removeChild(oldTable);
+  root.appendChild(newTable);
 }
+
 
 function sort(event) {
-  let sortedData = repos.slice();
+  
+  const sortedData = options.filterBy ? repos.filter(item =>
+    item.name.toLowerCase().includes(options.filterBy) || (
+      item.description && item.description.toLowerCase().includes(options.filterBy)
+    )) : repos.slice();
 
-  if (event === "name") {
-    sortedData.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (event === "update") {
-    sortedData.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  options.sortBy = event.target.value;
+  if (options.buttonValue === "ASC") {
+    if (event.target.value === "name") {
+      sortedData.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (event.target.value === "update") {
+      sortedData.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    }
+  } else {
+    if (event.target.value === "name") {
+      sortedData.sort((a, b) => b.name.localeCompare(a.name));
+    } else if (event.target.value === "update") {
+      sortedData.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at));
+    }
   }
 
-  return sortedData;
+  const newTable = createTable(sortedData);
+  newTable.className = "new-table";
+  const root = document.querySelector("div#root");
+  const oldTable = root.querySelector("table");
+  root.removeChild(oldTable);
+  root.appendChild(newTable);
 }
 
 function setPagination() {
