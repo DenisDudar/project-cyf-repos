@@ -1,3 +1,65 @@
 body {
   background-color: #eee;
 }
+
+table td {
+  background-color: rgb(226, 250, 199);
+  padding: 1em;
+  border: 1px solid black;
+  max-width: 10em;
+  word-wrap: break-word
+}
+
+table th {
+  background-color: rgb(157, 230, 90);
+  color: white;
+  padding: 1em;
+  border: 1px solid black;
+  font-weight: bold;
+}
+
+#root {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+
+.search-bar {
+  order: 1;
+}
+
+.search-bar input {
+  padding: 0.8em;
+  border-radius: 0.5em;
+  margin: 0.5em 1em 0.5em 0;
+}
+
+.search-bar button {
+  padding: 0.8em;
+  margin: 0.5em 0;
+  border-radius: 0.5em;
+}
+
+.sort-container {
+  order: 0;
+}
+
+.sort-container select {
+  padding: 0.8em;
+  border-radius: 0.5em;
+  margin: 0.5em 1em 0.5em 0;
+}
+
+.sort-container button {
+  padding: 0.8em;
+  margin: 0.5em 0;
+  border-radius: 0.5em;
+}
+
+table {
+  margin: 0.5em;
+}
+
+.new-table {
+  order: -1;
+}
