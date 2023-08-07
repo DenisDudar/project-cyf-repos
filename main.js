@@ -2,8 +2,10 @@ import repos from "/data/repos.js";
 
 const options = {
   filterBy: null,
-  sortBy: null,
-  buttonValue: null
+  sort: {
+    sortBy: null,
+    direction: null
+  }
 };
 
 export default function buildPage() {
@@ -33,8 +35,6 @@ function createTable(arr) {
 
   table.appendChild(headerRow);
   
-  // TODO:
-  // replace for loop with map.
   for (let i = 0; i < arr.length; i++) {
     let tr = document.createElement("tr");
     
@@ -113,7 +113,7 @@ function createSortContainer () {
 
   const sortButton = document.createElement("button");
   sortButton.textContent = "ASC";
-  options.buttonValue = sortButton.textContent;
+  options.sort.direction = sortButton.textContent;
   sortContainer.appendChild(sortDropdown);
   sortContainer.appendChild(sortButton);
 
@@ -121,12 +121,12 @@ function createSortContainer () {
   sortButton.addEventListener("click", function () {
     if (sortButton.textContent === "ASC") {
       sortButton.textContent = "DESC";
-      options.buttonValue = sortButton.textContent;
-      sort(options.sortBy);
+      options.sort.direction = sortButton.textContent;
+      sort(options.sort.sortBy);
     } else {
       sortButton.textContent = "ASC";
-      options.buttonValue = sortButton.textContent;
-      sort(options.sortBy);
+      options.sort.direction = sortButton.textContent;
+      sort(options.sort.sortBy);
     }
   });
 
@@ -140,9 +140,19 @@ function search(searchTerm) {
     ));
   options.filterBy = searchTerm;
 
-  // TODO: 
-  // sheck if you need to sort your filtered data
-  // if yes, then sort fileteredData.
+  if (options.sort.sortBy && options.sort.sortBy === "name") {
+    if (options.sort.direction === "ASC") {
+      filteredData.sort((a, b) => a.name.localeCompare(b.name));
+    } else {
+      filteredData.sort((a, b) => b.name.localeCompare(a.name));
+    }
+  } else if (options.sort.sortBy && options.sort.sortBy === "update") {
+    if (options.sort.direction === "ASC") {
+      filteredData.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    } else {
+      filteredData.sort((a, b) => new Date(a.updated_at) - new Date(b.updated_at));
+    }
+  }
   
   const newTable = createTable(filteredData);
   newTable.className = "new-table";
@@ -154,14 +164,13 @@ function search(searchTerm) {
 
 
 function sort(event) {
-  
   const sortedData = options.filterBy ? repos.filter(item =>
     item.name.toLowerCase().includes(options.filterBy) || (
       item.description && item.description.toLowerCase().includes(options.filterBy)
     )) : repos.slice();
 
-  options.sortBy = event.target.value;
-  if (options.buttonValue === "ASC") {
+  options.sort.sortBy = event.target.value;
+  if (options.sort.direction === "ASC") {
     if (event.target.value === "name") {
       sortedData.sort((a, b) => a.name.localeCompare(b.name));
     } else if (event.target.value === "update") {
