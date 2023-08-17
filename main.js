@@ -240,7 +240,9 @@ function setPagination(pageNumber) {
   const root = document.querySelector("div#root");
   const existingTable = root.querySelector("table");
   root.removeChild(existingTable);
+
   const table = createTable(repos, options);
+  table.className = "newTable";
   root.appendChild(table);
 
   updatePagination(repos, options); // Update pagination buttons with original data
@@ -263,6 +265,15 @@ function updatePagination(filteredData) {
     startPage = Math.max(endPage - maxVisibleButtons + 1, 1);
   }
 
+  const previousButton = document.createElement("button");
+  previousButton.textContent = "Previous";
+  previousButton.addEventListener("click", function () {
+    if (options.currentPage > 1) {
+      setPagination(options.currentPage - 1);
+    }
+  });
+  paginationDiv.appendChild(previousButton);
+
   for (let i = startPage; i <= endPage; i++) {
     const pageButton = createPageButton(i);
     paginationDiv.appendChild(pageButton);
@@ -277,14 +288,6 @@ function updatePagination(filteredData) {
     paginationDiv.appendChild(lastButton);
   }
 
-  const previousButton = document.createElement("button");
-  previousButton.textContent = "Previous";
-  previousButton.addEventListener("click", function () {
-    if (options.currentPage > 1) {
-      setPagination(options.currentPage - 1);
-    }
-  });
-
   const nextButton = document.createElement("button");
   nextButton.textContent = "Next";
   nextButton.addEventListener("click", function () {
@@ -293,7 +296,6 @@ function updatePagination(filteredData) {
     }
   });
 
-  paginationDiv.appendChild(previousButton);
   paginationDiv.appendChild(nextButton);
 }
 
