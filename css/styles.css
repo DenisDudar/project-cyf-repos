@@ -1,4 +1,4 @@
-body {
+CSS body {
   background-color: #eee;
 }
 
@@ -52,8 +52,8 @@ input {
   border-radius: 0.5em;
   margin-right: 1em;
   border: 1px solid #193a01;
-  height: 30px; /*  висота кнопки */
-  width: 650px; /*  ширина кнопки */
+  height: 30px;
+  width: 650px;
 }
 
 button {
@@ -82,7 +82,7 @@ button {
   justify-content: center;
   align-items: center;
   grid-row: 1 / 2;
-  margin-bottom: 0.5em; /* Змінити margin-top на margin-bottom */
+  margin-bottom: 0.5em;
 }
 
 #pagination {
@@ -114,4 +114,9 @@ button {
   background-color: transparent;
   border-color: #ccc;
   cursor: default;
+}
+
+#pagination button.active {
+  background-color: rgb(190, 250, 189);
+  color: rgb(8, 8, 8);
 }

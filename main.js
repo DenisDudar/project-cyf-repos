@@ -16,13 +16,13 @@ export default function buildPage() {
   const searchBar = createSearchBar();
   root.appendChild(searchBar);
 
-  const sortDropdown = createSortDropdown();
-  root.appendChild(sortDropdown);
+  // const sortDropdown = createSortDropdown();
+  // root.appendChild(sortDropdown);
 
-  const pageSizeDropdown = createPageSizeDropdown();
-  root.appendChild(pageSizeDropdown);
+  // const pageSizeDropdown = createPageSizeDropdown();
+  // root.appendChild(pageSizeDropdown);
 
-  addPaginationButtons(); // Add pagination buttons after the table is created
+  addPaginationButtons();
 }
 
 function createTable(arr, options) {
@@ -222,9 +222,18 @@ function addPaginationButtons() {
 function createPageButton(pageNumber) {
   const pageButton = document.createElement("button");
   pageButton.textContent = pageNumber;
+
+  if (pageNumber === options.currentPage) {
+    pageButton.classList.add("active"); // Old class for lighting
+  }
+
+  if (pageNumber === options.currentPage) {
+    pageButton.classList.add("button-active"); // A new class for yellow lighting
+  }
   pageButton.addEventListener("click", function () {
     setPagination(pageNumber);
   });
+
   return pageButton;
 }
 
@@ -245,7 +254,7 @@ function setPagination(pageNumber) {
   table.className = "newTable";
   root.appendChild(table);
 
-  updatePagination(repos, options); // Update pagination buttons with original data
+  updatePagination(repos, options); // We update the backlight buttons with original data
 }
 
 function updatePagination(filteredData) {
@@ -272,6 +281,7 @@ function updatePagination(filteredData) {
       setPagination(options.currentPage - 1);
     }
   });
+
   paginationDiv.appendChild(previousButton);
 
   for (let i = startPage; i <= endPage; i++) {
